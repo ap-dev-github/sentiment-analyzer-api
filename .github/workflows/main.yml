@@ -16,14 +16,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  
+          python-version: 3.13.1  
 
-      - name: Install npm dependencies
+      - name: Install Serverless Plugins
         run: |
-         npm install --save-dev serverless
-         sls plugin install -n serverless-wsgi
-         sls plugin install -n serverless-python-requirements
-         pip install -r requirements
+          sls plugin install -n serverless-wsgi
+          sls plugin install -n serverless-python-requirements
+        
+      - name: Installing Requirements
+        run: pip install -r requirements
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
