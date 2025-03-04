@@ -19,14 +19,16 @@ functions:
 plugins:
   - serverless-python-requirements
   - serverless-wsgi
+  - serverless-prune-plugin
 
 custom:
   wsgi:
     app: app.app  # Ensure this matches your Flask app's import path
   pythonRequirements:
     dockerizePip: false
-
-package:
+    
+package:  
+  artifact: my_lambda.zip 
   patterns:
     - '!venv/**'
     - '!__pycache__/**'
