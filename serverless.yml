@@ -12,9 +12,6 @@ functions:
       - http:
           path: /
           method: ANY
-      - http:
-          path: '{proxy+}'
-          method: ANY
 
 plugins:
   - serverless-python-requirements
@@ -27,8 +24,7 @@ custom:
   pythonRequirements:
     dockerizePip: false
     
-package:  
-  artifact: my_lambda.zip 
+package: 
   patterns:
     - '!venv/**'
     - '!__pycache__/**'
