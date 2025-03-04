@@ -12,12 +12,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          python-version: 3.13.1  
-
+          
+      - name: Install Serverless Framework
+        run: |
+          npm install -g serverless@3.40.0
+          serverless --version  # Debugging: Check installed version
+          
       - name: Install Serverless Plugins
         run: |
           sls plugin install -n serverless-wsgi
@@ -36,11 +36,6 @@ jobs:
       - name: Install only production dependencies
         run: npm ci --only=production  # Only production dependencies are deployed
 
-      - name: Install Serverless Framework
-        run: |
-          npm install -g serverless@3.40.0
-          serverless --version  # Debugging: Check installed version
-          
       - name: Installing the prune Plugin 
         run: npm install serverless-prune-plugin
           
