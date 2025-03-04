@@ -24,7 +24,7 @@ jobs:
           sls plugin install -n serverless-python-requirements
         
       - name: Installing Requirements
-        run: pip install -r requirements
+        run: pip install -r requirements.txt
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
