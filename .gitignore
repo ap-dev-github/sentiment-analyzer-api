@@ -1,0 +1,36 @@
+# Ignore Node.js dependencies
+node_modules/
+
+
+# Ignore Serverless build artifacts
+.serverless/
+.serverless-offline/
+.sls-next/
+.sls-build/
+
+# Ignore environment variables (never commit secrets!)
+.env
+.env.local
+.env.production
+.env.test
+
+# Ignore log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.iml
+
+#  Ignore coverage/test files
+coverage/
+.nyc_output/
+jest/
