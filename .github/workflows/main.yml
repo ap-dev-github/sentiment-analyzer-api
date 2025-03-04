@@ -1,0 +1,52 @@
+name: Deploy AWS Lambda with Serverless
+
+on:
+  push:
+    branches:
+      - main  # Adjust for your deployment branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  
+
+      - name: Install npm dependencies
+        run: |
+         npm install --save-dev serverless
+         sls plugin install -n serverless-wsgi
+         sls plugin install -n serverless-python-requirements
+         pip install -r requirements
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          
+      - name: Install only production dependencies
+        run: npm ci --only=production  # Only production dependencies are deployed
+
+      - name: Install Serverless Framework
+        run: |
+          npm install -g serverless@3.40.0
+          serverless --version  # Debugging: Check installed version
+          
+      - name: Installing the prune Plugin 
+        run: npm install serverless-prune-plugin
+          
+      - name: Manually Create Deployment ZIP
+        run: zip -r my_lambda.zip . -x "*.git*" "node_modules/*" ".serverless/*" "tests/*"
+        
+      - name: Deploy with Serverless
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+        run: serverless deploy --verbose
