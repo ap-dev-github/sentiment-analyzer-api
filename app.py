@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from nltk.sentiment import SentimentIntensityAnalyzer
 import logging
 
+sia = SentimentIntensityAnalyzer()
 app = Flask(__name__)
 
 @app.route('/')
