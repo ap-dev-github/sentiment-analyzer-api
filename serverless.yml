@@ -3,7 +3,7 @@ service: sentiment-analyzer
 provider:
   name: aws
   runtime: python3.9
-  region: us-east-1
+  region: ap-south-1
 
 functions:
   app:
