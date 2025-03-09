@@ -15,9 +15,10 @@ functions:
       - http:
           path: /analyze/{input_txt}
           method: GET
-          parameter:
-            path:
-              input_txt: true
+          requests:
+            parameter:
+              path:
+                input_txt: true
 
 
 plugins:
