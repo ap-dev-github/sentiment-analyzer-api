@@ -22,8 +22,8 @@ functions:
 
 
 plugins:
-  - serverless-python-requirements
   - serverless-wsgi
+  - serverless-python-requirements
   - serverless-prune-plugin
 
 custom:

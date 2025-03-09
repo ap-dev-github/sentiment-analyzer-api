@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "serverless-prune-plugin": "^2.1.0",
     "serverless-python-requirements": "^6.1.2",
     "serverless-wsgi": "^3.0.5"
   }

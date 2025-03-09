@@ -1,0 +1,5 @@
+pytest      # running unit tests without running the server
+flake8      # Linter to check for style and syntax issues in Python code
+isort       # Automatically sorts and organizes import statements
+mypy        # Static type checker to catch type-related errors
+bandit      # Security analysis tool to detect vulnerabilities in Python code
