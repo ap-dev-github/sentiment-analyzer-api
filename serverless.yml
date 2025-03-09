@@ -11,7 +11,14 @@ functions:
     events:
       - http:
           path: /
-          method: ANY
+          method: GET
+      - http:
+          path: '/analyze/{input_txt}'
+          method: GET
+          parameter:
+            path:
+              input_txt: true
+
 
 plugins:
   - serverless-python-requirements
