@@ -13,7 +13,7 @@ functions:
           path: /
           method: GET
       - http:
-          path: '/analyze/{input_txt}'
+          path: /analyze/{input_txt}
           method: GET
           parameter:
             path:
