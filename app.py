@@ -1,7 +1,7 @@
 import logging
 
 from flask import Flask, jsonify
-from nltk.sentiment import SentimentIntensityAnalyzer # type: ignore
+from nltk.sentiment import SentimentIntensityAnalyzer  # type: ignore
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)

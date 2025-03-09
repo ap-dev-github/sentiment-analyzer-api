@@ -31,6 +31,9 @@ custom:
     app: app.app 
   pythonRequirements:
     dockerizePip: false
+  prune:
+    automatic: true  
+    number: 2  
     
 package: 
   patterns:

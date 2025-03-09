@@ -3,7 +3,12 @@ name: Deploy AWS Lambda with Serverless
 on:
   push:
     branches:
-      - main  # Adjust for your deployment branch
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main   # Run tests when merging to main and dev
+      - dev    
 
 jobs:
   deploy:
@@ -21,8 +26,9 @@ jobs:
       - name: Verify Python installation
         run: python --version
 
-        
-          
+      - name: Triggering the run_checks using shell
+        run: sh run_checks.sh
+           
       - name: Install Serverless Framework
         run: |
           npm install -g serverless@3.40.0
@@ -46,10 +52,10 @@ jobs:
       - name: Install only production dependencies
         run: npm ci --only=production  # Only production dependencies are deployed
         
-      - name: Installing the prune Plugin 
+      - name: Installing the prune Plugin
         run: npm install serverless-prune-plugin
         
       - name: Deploy with Serverless
         env:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        run: serverless deploy --verbose
+        run: serverless deploy
