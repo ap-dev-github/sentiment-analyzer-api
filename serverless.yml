@@ -20,7 +20,7 @@ plugins:
 
 custom:
   wsgi:
-    app: app.app  # Ensure this matches your Flask app's import path
+    app: app.app 
   pythonRequirements:
     dockerizePip: false
     

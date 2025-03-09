@@ -1,0 +1,6 @@
+-r requirements.txt  # Includes all production dependencies
+pytest              # Testing framework
+black               # Code formatter
+flake8              # Linter
+serverless          # Serverless framework
+serverless-python-requirements 
