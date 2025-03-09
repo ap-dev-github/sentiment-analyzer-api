@@ -31,7 +31,10 @@ Thumbs.db
 *.iml
 
 #ignore the cache file 
-__pycache__/
+__pycache__/** 
+.mypy_cache/** 
+.pytest_cache/** 
+
 
 #  Ignore coverage/test files
 coverage/
