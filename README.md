@@ -8,7 +8,7 @@
 >With its **serverless architecture**, the API **scales down to zero cost** when idle (**for Lambda alone**). When used with **API Gateway and S3**, operational costs can **reduce by up to 98%**, making it a **lightweight, cost-effective, and highly scalable** sentiment analysis solution.  
  
 ## 🎯 Use Cases
--  **Review Categorization**: Automatically classifies reviews as **Good, Bad, orNeutral**.
+-  **Review Categorization**: Automatically classifies reviews as **Positive, Negative, or Neutral**.
 -  **Automated Customer Support**: Negative reviews trigger **AWS SNS notifications** to notify the **QA team** and send a **custom apology email** to the customer.
 - **Recommendation System**: Uses **positive reviews** to suggest the best-rated products or services.
 -  **Scalability & Serverless**: Designed to work **seamlessly** with **AWS Lambda**, ensuring **cost efficiency and  automatic scaling**.
