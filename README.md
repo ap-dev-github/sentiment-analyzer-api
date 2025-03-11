@@ -64,6 +64,7 @@ The **Sentiment Analyzer API** is a **highly scalable**, **serverless** solution
 
 🚀 **Built with Flask | Serverless | AWS Lambda | GitHub Actions | Passion :)**
 ## Developer and Maintainer
+
 # **Ayush Pandey**
 [🔗 Connect on LinkedIn](https://www.linkedin.com/in/linkedap/)  
 📧 **Email:** [ayushpandey.cs@gmail.com](mailto:ayushpandey.cs@gmail.com)  
