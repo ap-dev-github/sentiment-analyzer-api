@@ -1,3 +1,11 @@
 Flask
 Werkzeug
 nltk
+pytest              # Testing framework
+black               # Code formatter
+flake8              # Linter
+serverless          # Serverless framework
+serverless-python-requirements 
+isort       # Automatically sorts and organizes import statements
+mypy        # Static type checker to catch type-related errors
+bandit      # Security analysis tool to detect vulnerabilities in Python code
