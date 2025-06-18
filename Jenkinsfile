@@ -5,13 +5,6 @@ pipeline {
     VENV = 'venv'
   }
 
-  stages {
-    stage('Clone Repo') {
-      steps {
-        git 'https://github.com/ap-dev-github/sentiment-analyzer-api.git'
-      }
-    }
-
     stage('Set Up Python') {
       steps {
         sh '''
