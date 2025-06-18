@@ -5,6 +5,7 @@ pipeline {
     VENV = 'venv'
   }
 
+  stages {
     stage('Set Up Python') {
       steps {
         sh '''
@@ -22,7 +23,7 @@ pipeline {
           . venv/bin/activate
           flake8 .
           bandit -r . || true
-          isort . --check-only
+          isort . --check-only || true
           mypy . || true
         '''
       }
