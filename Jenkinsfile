@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        SERVERLESS_ACCESS_KEY = credentials('serverless-access-key') // Jenkins Secret
-        PATH = "/usr/bin:$PATH" // Ensure global serverless is accessible
+        SERVERLESS_ACCESS_KEY = credentials('SERVERLESS_ACCESS_KEY') 
+        PATH = "/usr/bin:$PATH" 
     }
 
     stages {
