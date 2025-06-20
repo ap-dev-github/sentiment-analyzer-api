@@ -21,7 +21,7 @@ pipeline {
       steps {
         sh '''
           . venv/bin/activate
-          flake8 .
+          flake8 . --exclude=venv
           bandit -r . || true
           isort . --check-only || true
           mypy . || true
