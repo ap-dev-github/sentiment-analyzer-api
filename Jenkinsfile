@@ -1,3 +1,4 @@
+
 pipeline {
   agent any
 
@@ -12,16 +13,16 @@ pipeline {
       steps {
         sh '''
           echo "Checking Python version..."
-          python3 --version || { echo "Python not found"; exit 1; }
-
+          python3 --version
+          
           echo "Checking Node version..."
-          node -v || { echo "Node.js not found"; exit 1; }
+          node -v || (echo "Node.js not found" && exit 1)
 
-          echo "Checking npm..."
-          npm -v || { echo "npm not found"; exit 1; }
+          echo "Checking npm version..."
+          npm -v || (echo "npm not found" && exit 1)
 
-          echo "Checking Serverless CLI..."
-          serverless -v || { echo "Serverless not found"; exit 1; }
+          echo "Checking Serverless version..."
+          serverless --version || (echo "Serverless CLI not found" && exit 1)
         '''
       }
     }
@@ -47,10 +48,10 @@ pipeline {
 
   post {
     failure {
-      echo "Pipeline failed. Check logs above 👆"
+      echo 'Pipeline failed. Check logs above 👆'
     }
     success {
-      echo "✅ Deployed to AWS Lambda successfully!"
+      echo '✅ Deployment successful!'
     }
   }
 }
