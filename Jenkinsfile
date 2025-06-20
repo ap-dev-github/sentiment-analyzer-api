@@ -1,8 +1,9 @@
-
 pipeline {
   agent any
 
   environment {
+    // Add serverless CLI directory to PATH
+    PATH = "/mnt/c/Users/inbox/AppData/Roaming/npm:$PATH"
     VENV = 'venv'
     PYTHON = './venv/bin/python'
     PIP = './venv/bin/pip'
@@ -16,13 +17,13 @@ pipeline {
           python3 --version
           
           echo "Checking Node version..."
-          node -v || (echo "Node.js not found" && exit 1)
-
+          node -v
+          
           echo "Checking npm version..."
-          npm -v || (echo "npm not found" && exit 1)
+          npm -v
 
           echo "Checking Serverless version..."
-          serverless --version || (echo "Serverless CLI not found" && exit 1)
+          /mnt/c/Users/inbox/AppData/Roaming/npm/serverless --version
         '''
       }
     }
@@ -40,7 +41,8 @@ pipeline {
     stage('Deploy to AWS Lambda') {
       steps {
         sh '''
-          serverless deploy --stage dev
+          echo "Deploying with Serverless CLI..."
+          /mnt/c/Users/inbox/AppData/Roaming/npm/serverless deploy --stage dev
         '''
       }
     }
@@ -48,7 +50,7 @@ pipeline {
 
   post {
     failure {
-      echo 'Pipeline failed. Check logs above 👆'
+      echo '❌ Pipeline failed. Check logs above.'
     }
     success {
       echo '✅ Deployment successful!'
