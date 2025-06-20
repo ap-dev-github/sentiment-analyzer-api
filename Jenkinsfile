@@ -1,4 +1,3 @@
-
 pipeline {
   agent any
 
@@ -6,46 +5,38 @@ pipeline {
     VENV = 'venv'
     PYTHON = './venv/bin/python'
     PIP = './venv/bin/pip'
-    FLAKE8 = './venv/bin/flake8'
-    BANDIT = './venv/bin/bandit'
-    ISORT = './venv/bin/isort'
-    MYPY = './venv/bin/mypy'
   }
 
   stages {
-    stage('Setup & Lint in Docker') {
+    stage('Install Python Deps') {
       steps {
-        script {
-          docker.image('cimg/python:3.12-node').inside {
-            sh '''
-              python -m venv venv
-              ./venv/bin/pip install --upgrade pip
-              ./venv/bin/pip install -r requirements.txt
-
-              # Linting & Security (ignoring venv, tests)
-              ./venv/bin/flake8 . --exclude=venv,tests,.serverless || true
-              ./venv/bin/bandit -r . -x venv,tests,.serverless || true
-              ./venv/bin/isort . --skip venv --skip tests --skip .serverless --check-only || true
-              ./venv/bin/mypy . --exclude '(venv|tests|\\.serverless)' || true
-            '''
-          }
-        }
+        sh '''
+          python3 -m venv venv
+          ${PIP} install --upgrade pip
+          ${PIP} install -r requirements.txt
+        '''
       }
     }
 
-    stage('Deploy to Lambda') {
+    stage('Lint & Security') {
       steps {
-        script {
-          docker.image('cimg/python:3.12-node').inside {
-            sh '''
-              npm install -g serverless
-              ./venv/bin/pip install serverless  # optional
-              serverless deploy --stage dev
-            '''
-          }
-        }
+        sh '''
+          ./venv/bin/flake8 . --exclude=venv,tests,.serverless || true
+          ./venv/bin/bandit -r . -x venv,tests,.serverless || true
+          ./venv/bin/isort . --skip venv --skip tests --skip .serverless --check-only || true
+          ./venv/bin/mypy . --exclude '(venv|tests|\\.serverless)' || true
+        '''
+      }
+    }
+
+    stage('Deploy to AWS Lambda') {
+      steps {
+        sh '''
+          npm install -g serverless
+          ./venv/bin/pip install serverless
+          serverless deploy --stage dev
+        '''
       }
     }
   }
 }
-
