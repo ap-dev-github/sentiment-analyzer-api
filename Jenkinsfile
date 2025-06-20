@@ -1,9 +1,6 @@
+
 pipeline {
-  agent {
-    docker {
-      image 'cimg/python:3.12-node' // includes Python and Node.js
-    }
-  }
+  agent any
 
   environment {
     VENV = 'venv'
@@ -16,37 +13,39 @@ pipeline {
   }
 
   stages {
-    stage('Set Up Python') {
+    stage('Setup & Lint in Docker') {
       steps {
-        sh '''
-          python -m venv venv
-          ${PIP} install --upgrade pip
-          ${PIP} install -r requirements.txt
-        '''
-      }
-    }
+        script {
+          docker.image('cimg/python:3.12-node').inside {
+            sh '''
+              python -m venv venv
+              ./venv/bin/pip install --upgrade pip
+              ./venv/bin/pip install -r requirements.txt
 
-    stage('Lint & Security (ignore venv/tests)') {
-      steps {
-        sh '''
-          ${FLAKE8} . --exclude=venv,tests,.serverless || true
-          ${BANDIT} -r . -x venv,tests,.serverless || true
-          ${ISORT} . --skip venv --skip tests --skip .serverless --check-only || true
-          ${MYPY} . --exclude '(venv|tests|\\.serverless)' || true
-        '''
+              # Linting & Security (ignoring venv, tests)
+              ./venv/bin/flake8 . --exclude=venv,tests,.serverless || true
+              ./venv/bin/bandit -r . -x venv,tests,.serverless || true
+              ./venv/bin/isort . --skip venv --skip tests --skip .serverless --check-only || true
+              ./venv/bin/mypy . --exclude '(venv|tests|\\.serverless)' || true
+            '''
+          }
+        }
       }
     }
 
     stage('Deploy to Lambda') {
       steps {
-        sh '''
-          npm install -g serverless
-          ${PIP} install serverless  # optional, if needed for Python plugin
-          serverless deploy --stage dev
-        '''
+        script {
+          docker.image('cimg/python:3.12-node').inside {
+            sh '''
+              npm install -g serverless
+              ./venv/bin/pip install serverless  # optional
+              serverless deploy --stage dev
+            '''
+          }
+        }
       }
     }
   }
 }
-
 
