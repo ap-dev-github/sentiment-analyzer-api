@@ -16,8 +16,8 @@ pipeline {
       steps {
         sh '''
           python3 -m venv venv
-          ./venv/bin/pip install --upgrade pip
-          ./venv/bin/pip install -r requirements.txt
+          ${PIP} install --upgrade pip
+          ${PIP} install -r requirements.txt
         '''
       }
     }
@@ -36,8 +36,18 @@ pipeline {
     stage('Deploy to Lambda') {
       steps {
         sh '''
+          # Check if npm is available
+          if ! command -v npm &> /dev/null; then
+            echo "Installing Node.js and npm..."
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+          fi
+
           npm install -g serverless
-          ./venv/bin/pip install serverless  # Optional: if needed for Python env
+
+          # If you need Python plugin support in serverless
+          ${PIP} install serverless
+
           serverless deploy --stage dev
         '''
       }
