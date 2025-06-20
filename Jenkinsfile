@@ -3,6 +3,13 @@ pipeline {
 
   environment {
     VENV = 'venv'
+    VENV_PYTHON = './venv/bin/python'
+    VENV_PIP = './venv/bin/pip'
+    VENV_FLAKE8 = './venv/bin/flake8'
+    VENV_BANDIT = './venv/bin/bandit'
+    VENV_ISORT = './venv/bin/isort'
+    VENV_MYPY = './venv/bin/mypy'
+    VENV_PYTEST = './venv/bin/pytest'
   }
 
   stages {
@@ -10,9 +17,8 @@ pipeline {
       steps {
         sh '''
           python3 -m venv venv
-          . venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          ./venv/bin/pip install --upgrade pip
+          ./venv/bin/pip install -r requirements.txt
         '''
       }
     }
@@ -20,11 +26,10 @@ pipeline {
     stage('Lint & Security') {
       steps {
         sh '''
-          . venv/bin/activate
-          flake8 . --exclude=venv
-          bandit -r . || true
-          isort . --check-only || true
-          mypy . || true
+          ${VENV_FLAKE8} . --exclude=venv,tests,.serverless
+          ${VENV_BANDIT} -r . -x venv,tests,.serverless || true
+          ${VENV_ISORT} . --skip venv --skip tests --skip .serverless --check-only || true
+          ${VENV_MYPY} . --exclude '(venv|tests|\\.serverless)' || true
         '''
       }
     }
@@ -32,8 +37,7 @@ pipeline {
     stage('Run Tests') {
       steps {
         sh '''
-          . venv/bin/activate
-          pytest tests/ --junitxml=results.xml
+          ${VENV_PYTEST} tests/ --junitxml=results.xml
         '''
       }
     }
@@ -41,9 +45,8 @@ pipeline {
     stage('Deploy to Lambda') {
       steps {
         sh '''
-          . venv/bin/activate
           npm install -g serverless
-          serverless deploy --stage dev
+          ./venv/bin/serverless deploy --stage dev
         '''
       }
     }
