@@ -2,27 +2,29 @@ pipeline {
   agent any
 
   environment {
-    VENV_DIR = '.venv'
+    SERVERLESS_ACCESS_KEY = credentials('SERVERLESS_ACCESS_KEY') 
+    AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
   }
 
   stages {
     stage('Check Environment') {
       steps {
         sh '''
-          echo Checking Python version...
-          python3 --version || { echo "Python 3 not found"; exit 1; }
+          echo "Checking Python version..."
+          python3 --version
 
-          echo Checking Node version...
-          node -v || { echo "Node.js not found"; exit 1; }
+          echo "Checking Node version..."
+          node -v
 
-          echo Checking npm version...
-          npm -v || { echo "npm not found"; exit 1; }
+          echo "Checking npm version..."
+          npm -v
 
-          echo Checking Serverless version...
-          if ! command -v serverless &> /dev/null; then
-            echo "Serverless CLI not found"
+          echo "Checking Serverless version..."
+          /usr/bin/serverless --version || {
+            echo "❌ Serverless CLI not found"
             exit 1
-          fi
+          }
         '''
       }
     }
@@ -30,9 +32,8 @@ pipeline {
     stage('Setup Python Virtualenv') {
       steps {
         sh '''
-          echo Creating virtual environment...
-          python3 -m venv $VENV_DIR
-          source $VENV_DIR/bin/activate
+          python3 -m venv venv
+          . venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt
         '''
@@ -41,24 +42,21 @@ pipeline {
 
     stage('Deploy to AWS Lambda') {
       steps {
-        withCredentials([string(credentialsId: 'SERVERLESS_ACCESS_KEY', variable: 'SERVERLESS_ACCESS_KEY')]) {
-          sh '''
-            echo Deploying with Serverless CLI...
-            export SERVERLESS_ACCESS_KEY=$SERVERLESS_ACCESS_KEY
-            serverless deploy --stage dev
-          '''
-        }
+        echo '🚀 Deploying with Serverless CLI...'
+        sh '''
+          export SERVERLESS_ACCESS_KEY=$SERVERLESS_ACCESS_KEY
+          /usr/bin/serverless deploy --stage dev
+        '''
       }
     }
   }
 
   post {
     failure {
-      echo '❌ Pipeline failed. Check logs above.'
+      echo "❌ Pipeline failed. Check logs above."
     }
     success {
-      echo '✅ Deployment successful!'
+      echo "✅ Deployment successful!"
     }
   }
 }
-
