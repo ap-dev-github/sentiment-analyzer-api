@@ -55,7 +55,7 @@ pipeline {
 
         stage('Deploy to AWS Lambda') {
             steps {
-                withCredentials([string(credentialsId: 'serverless-access-key', variable: 'SERVERLESS_ACCESS_KEY')]) {
+                withCredentials([string(credentialsId: 'SERVERLESS_ACCESS_KEY', variable: 'SERVERLESS_ACCESS_KEY')]) {
                     sh '''
                         echo "Deploying with Serverless CLI..."
                         serverless deploy --stage dev --verbose
