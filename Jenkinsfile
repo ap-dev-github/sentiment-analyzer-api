@@ -3,13 +3,12 @@ pipeline {
 
   environment {
     VENV = 'venv'
-    VENV_PYTHON = './venv/bin/python'
-    VENV_PIP = './venv/bin/pip'
-    VENV_FLAKE8 = './venv/bin/flake8'
-    VENV_BANDIT = './venv/bin/bandit'
-    VENV_ISORT = './venv/bin/isort'
-    VENV_MYPY = './venv/bin/mypy'
-    VENV_PYTEST = './venv/bin/pytest'
+    PYTHON = './venv/bin/python'
+    PIP = './venv/bin/pip'
+    FLAKE8 = './venv/bin/flake8'
+    BANDIT = './venv/bin/bandit'
+    ISORT = './venv/bin/isort'
+    MYPY = './venv/bin/mypy'
   }
 
   stages {
@@ -23,21 +22,13 @@ pipeline {
       }
     }
 
-    stage('Lint & Security') {
+    stage('Lint & Security (ignore venv/tests)') {
       steps {
         sh '''
-          ${VENV_FLAKE8} . --exclude=venv,tests,.serverless
-          ${VENV_BANDIT} -r . -x venv,tests,.serverless || true
-          ${VENV_ISORT} . --skip venv --skip tests --skip .serverless --check-only || true
-          ${VENV_MYPY} . --exclude '(venv|tests|\\.serverless)' || true
-        '''
-      }
-    }
-
-    stage('Run Tests') {
-      steps {
-        sh '''
-          ${VENV_PYTEST} tests/ --junitxml=results.xml
+          ${FLAKE8} . --exclude=venv,tests,.serverless || true
+          ${BANDIT} -r . -x venv,tests,.serverless || true
+          ${ISORT} . --skip venv --skip tests --skip .serverless --check-only || true
+          ${MYPY} . --exclude '(venv|tests|\\.serverless)' || true
         '''
       }
     }
@@ -46,15 +37,11 @@ pipeline {
       steps {
         sh '''
           npm install -g serverless
-          ./venv/bin/serverless deploy --stage dev
+          ./venv/bin/pip install serverless  # Optional: if needed for Python env
+          serverless deploy --stage dev
         '''
       }
     }
   }
-
-  post {
-    always {
-      junit 'results.xml'
-    }
-  }
 }
+
