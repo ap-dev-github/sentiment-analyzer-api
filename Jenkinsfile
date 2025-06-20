@@ -1,5 +1,9 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'cimg/python:3.12-node' // includes Python and Node.js
+    }
+  }
 
   environment {
     VENV = 'venv'
@@ -15,7 +19,7 @@ pipeline {
     stage('Set Up Python') {
       steps {
         sh '''
-          python3 -m venv venv
+          python -m venv venv
           ${PIP} install --upgrade pip
           ${PIP} install -r requirements.txt
         '''
@@ -36,22 +40,13 @@ pipeline {
     stage('Deploy to Lambda') {
       steps {
         sh '''
-          # Check if npm is available
-          if ! command -v npm &> /dev/null; then
-            echo "Installing Node.js and npm..."
-            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-            sudo apt-get install -y nodejs
-          fi
-
           npm install -g serverless
-
-          # If you need Python plugin support in serverless
-          ${PIP} install serverless
-
+          ${PIP} install serverless  # optional, if needed for Python plugin
           serverless deploy --stage dev
         '''
       }
     }
   }
 }
+
 
