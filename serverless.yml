@@ -2,7 +2,7 @@ service: sentiment-analyzer
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.12
   region: ap-south-1
 
 functions:
