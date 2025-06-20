@@ -2,28 +2,27 @@ pipeline {
   agent any
 
   environment {
-    // Add serverless CLI directory to PATH
-    PATH = "/mnt/c/Users/inbox/AppData/Roaming/npm:$PATH"
-    VENV = 'venv'
-    PYTHON = './venv/bin/python'
-    PIP = './venv/bin/pip'
+    VENV_DIR = '.venv'
   }
 
   stages {
     stage('Check Environment') {
       steps {
         sh '''
-          echo "Checking Python version..."
-          python3 --version
-          
-          echo "Checking Node version..."
-          node -v
-          
-          echo "Checking npm version..."
-          npm -v
+          echo Checking Python version...
+          python3 --version || { echo "Python 3 not found"; exit 1; }
 
-          echo "Checking Serverless version..."
-          /mnt/c/Users/inbox/AppData/Roaming/npm/serverless --version
+          echo Checking Node version...
+          node -v || { echo "Node.js not found"; exit 1; }
+
+          echo Checking npm version...
+          npm -v || { echo "npm not found"; exit 1; }
+
+          echo Checking Serverless version...
+          if ! command -v serverless &> /dev/null; then
+            echo "Serverless CLI not found"
+            exit 1
+          fi
         '''
       }
     }
@@ -31,19 +30,24 @@ pipeline {
     stage('Setup Python Virtualenv') {
       steps {
         sh '''
-          python3 -m venv ${VENV}
-          ${PIP} install --upgrade pip
-          ${PIP} install -r requirements.txt
+          echo Creating virtual environment...
+          python3 -m venv $VENV_DIR
+          source $VENV_DIR/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
         '''
       }
     }
 
     stage('Deploy to AWS Lambda') {
       steps {
-        sh '''
-          echo "Deploying with Serverless CLI..."
-          /mnt/c/Users/inbox/AppData/Roaming/npm/serverless deploy --stage dev
-        '''
+        withCredentials([string(credentialsId: 'SERVERLESS_ACCESS_KEY', variable: 'SERVERLESS_ACCESS_KEY')]) {
+          sh '''
+            echo Deploying with Serverless CLI...
+            export SERVERLESS_ACCESS_KEY=$SERVERLESS_ACCESS_KEY
+            serverless deploy --stage dev
+          '''
+        }
       }
     }
   }
@@ -57,3 +61,4 @@ pipeline {
     }
   }
 }
+
