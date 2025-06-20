@@ -8,23 +8,30 @@ pipeline {
   }
 
   stages {
-    stage('Install Python Deps') {
+    stage('Check Environment') {
       steps {
         sh '''
-          python3 -m venv venv
-          ${PIP} install --upgrade pip
-          ${PIP} install -r requirements.txt
+          echo "Checking Python version..."
+          python3 --version || { echo "Python not found"; exit 1; }
+
+          echo "Checking Node version..."
+          node -v || { echo "Node.js not found"; exit 1; }
+
+          echo "Checking npm..."
+          npm -v || { echo "npm not found"; exit 1; }
+
+          echo "Checking Serverless CLI..."
+          serverless -v || { echo "Serverless not found"; exit 1; }
         '''
       }
     }
 
-    stage('Lint & Security') {
+    stage('Setup Python Virtualenv') {
       steps {
         sh '''
-          ./venv/bin/flake8 . --exclude=venv,tests,.serverless || true
-          ./venv/bin/bandit -r . -x venv,tests,.serverless || true
-          ./venv/bin/isort . --skip venv --skip tests --skip .serverless --check-only || true
-          ./venv/bin/mypy . --exclude '(venv|tests|\\.serverless)' || true
+          python3 -m venv ${VENV}
+          ${PIP} install --upgrade pip
+          ${PIP} install -r requirements.txt
         '''
       }
     }
@@ -32,11 +39,18 @@ pipeline {
     stage('Deploy to AWS Lambda') {
       steps {
         sh '''
-          npm install -g serverless
-          ./venv/bin/pip install serverless
           serverless deploy --stage dev
         '''
       }
+    }
+  }
+
+  post {
+    failure {
+      echo "Pipeline failed. Check logs above 👆"
+    }
+    success {
+      echo "✅ Deployed to AWS Lambda successfully!"
     }
   }
 }
