@@ -53,9 +53,11 @@ pipeline {
     stage('Deploy to AWS Lambda') {
       steps {
         withCredentials([
-          string(credentialsId: 'serverless-key', variable: 'SERVERLESS_ACCESS_KEY'),
-          usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')
-        ]) {
+  string(credentialsId: 'SERVERLESS_ACCESS_KEY', variable: 'SERVERLESS_ACCESS_KEY'),
+  string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY_ID'),
+  string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_ACCESS_KEY')
+])
+ {
           sh '''
             echo Deploying with Serverless CLI...
             serverless deploy --stage $STAGE --verbose
